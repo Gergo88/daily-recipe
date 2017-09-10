@@ -1,9 +1,8 @@
 package com.gergely.jonas.dailyrecipe.model.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ext-jonasg on 2017.09.08..
@@ -16,6 +15,8 @@ public class Recipe {
     private String name;
     private String comment;
     private String description;
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    private List<Findings> findingsList;
 
     public Recipe() {
     }
@@ -56,5 +57,13 @@ public class Recipe {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Findings> getFindingsList() {
+        return findingsList;
+    }
+
+    public void setFindingsList(List<Findings> findingsList) {
+        this.findingsList = findingsList;
     }
 }

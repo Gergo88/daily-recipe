@@ -23,7 +23,12 @@
     <dependencies>
         <dependency>
             <groupId>com.gergely.jonas</groupId>
-            <artifactId>daily-recipe-dao</artifactId>
+            <artifactId>daily-recipe-dto</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gergely.jonas</groupId>
+            <artifactId>daily-recipe-service</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
