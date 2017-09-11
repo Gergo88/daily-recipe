@@ -28,6 +28,17 @@ public class Findings {
         this.amount = amount;
     }
 
+    @Override
+    public String toString() {
+        return "Findings{" +
+                "id=" + id +
+                ", recipe=" + recipe +
+                ", ingredient=" + ingredient +
+                ", unit=" + unit +
+                ", amount='" + amount + '\'' +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }

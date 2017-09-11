@@ -18,22 +18,40 @@
             var x = 0; //initlal text box count
             $(add_button).click(function (e) { //on add input button click
                 e.preventDefault();
+                var ingredientValues = document.getElementById('findingsList[0]-ingredientDTO-id').options;
+                var ingredientTexts = [];
+                var ingredientOptions = "";
+                for (var i = 0; i < ingredientValues.length; i++) {
+                    ingredientTexts.push(document.getElementById('findingsList[0]-ingredientDTO-id').options.item(i));
+                    ingredientOptions = ingredientOptions + "<option value=" + ingredientValues[i].value + ">" + ingredientTexts[i].text + "</option>\n";
+                }
+
+                var unitValues = document.getElementById('findingsList[0]-unitDTO-id').options;
+                var unitTexts = [];
+                var unitOptions = "";
+                for (var i = 0; i < unitValues.length; i++) {
+                    unitTexts.push(document.getElementById('findingsList[0]-unitDTO-id').options.item(i));
+                    unitOptions = unitOptions + "<option value=" + unitValues[i].value + ">" + unitTexts[i].text + "</option>\n";
+                }
+
+
                 if (x < max_fields) { //max input box allowed
                     x++; //text box increment
                     $(wrapper).append('<div style="margin-bottom: 25px" id="recipe-findings" class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
-                        '                        <select class="form-control" id="findingsList[' + x + '].ingredientDTO.id" name="findingsList[' + x + '].ingredientDTO.id">\n' +
-                        '                            <option value="0">Select the ingredient</option>\n' +
-                        '                            <option th:each="ingredient:${ingredients}" th:value="${ingredient.id}" th:text="${ingredient.name}"></option>\n' +
-                        '                        </select>\n' +
-                        '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
-                        '                        <select class="form-control" id="findingsList[' + x + '].unitDTO.id" name="findingsList[' + x + '].unitDTO.id">\n' +
-                        '                            <option value="0">Select the unit</option>\n' +
-                        '                            <option th:each="unit:${units}" th:value="${unit.id}" th:text="${unit.name}"></option>\n' +
-                        '                        </select>\n' +
-                        '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
-                        '                        <input type="text" class="form-control" th:id="findingsList[' + x + '].amount"\n' +
-                        '                               th:name="findingsList[' + x + '].amount"\n' +
-                        '                               placeholder="amount"/></div>'); //add input box
+                    '                        <input type="hidden" name="findingsList[' + x + '].id" value=""/>\n' +
+                    '                        <select class="form-control" id="findingsList[' + x + '].ingredientDTO.id" name="findingsList[' + x + '].ingredientDTO.id">\n' +
+                    ingredientOptions +
+                    '                        </select>\n' +
+                    '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
+                    '                        <select class="form-control" id="findingsList[' + x + '].unitDTO.id" name="findingsList[' + x + '].unitDTO.id">\n' +
+                    unitOptions +
+                    '                        </select>\n' +
+                    '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
+                    '                        <input type="text" class="form-control" id="findingsList[' + x + '].amount"\n' +
+                    '                              name="findingsList[' + x + '].amount"\n' +
+                    '                               placeholder="amount"/></div>'
+                )
+                    ; //add input box
                 }
             });
 
@@ -114,28 +132,35 @@
                     </div>
 
                     <div style="margin-bottom: 25px" id="recipe-findings" class="input-group">
-                        <button id="add_field_button" class="btn btn-success">Add More Fields</button>
-                        <a th:href="@{'/cook/addrow'}" id="btn-cook" class="btn btn-warning" role="button">addrow</a>
+                        <a id="add_field_button" class="btn btn-success">Add More Fields</a>
                     </div>
 
-                    <div style="margin-bottom: 25px" id="recipe-findings" class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
-                            <select class="form-control" id="findingsList[0].ingredientDTO.id"
-                                    name="findingsList[0].ingredientDTO.id">
-                                <option value="0">Select the ingredient</option>
-                                <option th:each="ingredient:${ingredients}" th:value="${ingredient.id}"
-                                        th:text="${ingredient.name}"></option>
-                            </select>
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
-                            <select class="form-control" id="findingsList[0].unitDTO.id"
-                                    name="findingsList[0].unitDTO.id">
-                                <option value="0">Select the unit</option>
-                                <option th:each="unit:${units}" th:value="${unit.id}" th:text="${unit.name}"></option>
-                            </select>
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
-                            <input type="text" class="form-control" th:id="findingsList[0].amount"
-                                   th:name="findingsList[0].amount"
-                                   placeholder="amount"/>
+                    <div style="margin-bottom: 25px" id="recipe-findings" class="input-group"
+                         th:each="findings,iterationStatus  : *{findingsList}">
+                        <input type="hidden"
+                               th:name="*{findingsList[__${iterationStatus.index}__].id}"
+                               th:field="*{findingsList[__${iterationStatus.index}__].id}"/>
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
+                        <select class="form-control"
+                                th:field="*{findingsList[__${iterationStatus.index}__].ingredientDTO.id}"
+                                th:name="*{findingsList[__${iterationStatus.index}__].ingredientDTO.id}"
+                                id="findingsList[0]-ingredientDTO-id">
+                            <option value="0">Ingredient...</option>
+                            <option th:each="ingredient:${ingredients}" th:value="${ingredient.id}"
+                                    th:text="${ingredient.name}"></option>
+                        </select>
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
+                        <select class="form-control" th:field="*{findingsList[__${iterationStatus.index}__].unitDTO.id}"
+                                id="findingsList[0]-unitDTO-id"
+                                th:name="*{findingsList[__${iterationStatus.index}__].unitDTO.id}">
+                            <option value="0">Select the unit</option>
+                            <option th:each="unit:${units}" th:value="${unit.id}" th:text="${unit.name}"></option>
+                        </select>
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
+                        <input type="text" class="form-control" id="findingsList[0]-amount"
+                               th:name="*{findingsList[__${iterationStatus.index}__].amount}"
+                               th:field="*{findingsList[__${iterationStatus.index}__].amount}"
+                               placeholder="amount"/>
                     </div>
 
 

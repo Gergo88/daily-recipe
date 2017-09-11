@@ -39,6 +39,7 @@ public class CookService {
         for(int i = 0; i<findingsList.size(); i++) {
             findingsList.get(i).setRecipe(savedRecipe);
         }
+        System.out.println(findingsList.toString());
         findingsRepository.saveAll(findingsList);
     }
 
@@ -49,6 +50,24 @@ public class CookService {
         }
         return findingsList;
     }
+
+    private List<FindingsDTO> getFindigsDTOListFromRecipe(Recipe recipe) {
+        List<FindingsDTO> findingsDTOList = new ArrayList<>();
+        for(Findings findings : recipe.getFindingsList()) {
+            findingsDTOList.add(getFindingsDTOFromFindings(findings));
+        }
+        return findingsDTOList;
+    }
+
+    private FindingsDTO getFindingsDTOFromFindings(Findings findings) {
+        FindingsDTO findingsDTO = new FindingsDTO();
+        findingsDTO.setId(findings.getId());
+        findingsDTO.setUnitDTO(getUnitDTOFromUnit(findings.getUnit()));
+        findingsDTO.setIngredientDTO(getIngredientDTOFromIngredient(findings.getIngredient()));
+        findingsDTO.setAmount(findings.getAmount());
+        return findingsDTO;
+    }
+
 
     private Findings getFindingsFromFindingsDTO(FindingsDTO findingsDTO) {
         Findings findings = new Findings();
@@ -97,6 +116,7 @@ public class CookService {
         fullRecipe.setName(recipe.orElse(null).getName());
         fullRecipe.setComment(recipe.orElse(null).getComment());
         fullRecipe.setDescription(recipe.orElse(null).getDescription());
+        fullRecipe.setFindingsList(getFindigsDTOListFromRecipe(recipe.orElse(new Recipe())));
         return fullRecipe;
     }
 
@@ -142,5 +162,16 @@ public class CookService {
         unitDTO.setName(unit.getName());
         unitDTO.setLongName(unit.getLongName());
         return unitDTO;
+    }
+
+    public FindingsDTO getNewFindigsDTO() {
+        FindingsDTO findingsDTO = new FindingsDTO();
+        IngredientDTO ingredientDTO = new IngredientDTO();
+        findingsDTO.setIngredientDTO(ingredientDTO);
+        findingsDTO.getIngredientDTO().setId(0L);
+        UnitDTO unitDTO = new UnitDTO();
+        unitDTO.setId(0L);
+        findingsDTO.setUnitDTO(unitDTO);
+        return findingsDTO;
     }
 }

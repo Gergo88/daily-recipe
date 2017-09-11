@@ -1,6 +1,9 @@
 package com.gergely.jonas.dailyrecipe.web.controller;
 
+import com.gergely.jonas.dailyrecipe.dto.FindingsDTO;
 import com.gergely.jonas.dailyrecipe.dto.FullRecipe;
+import com.gergely.jonas.dailyrecipe.dto.IngredientDTO;
+import com.gergely.jonas.dailyrecipe.dto.UnitDTO;
 import com.gergely.jonas.dailyrecipe.model.model.Findings;
 import com.gergely.jonas.dailyrecipe.service.CookService;
 import org.springframework.stereotype.Controller;
@@ -21,30 +24,26 @@ public class CookController {
 
     @RequestMapping(value = "/cook", method = RequestMethod.GET)
     public String getCookPage(Model model) {
-        model.addAttribute("fullRecipe", new FullRecipe());
+        FullRecipe fullRecipe = new FullRecipe();
+        fullRecipe.getFindingsList().add(cookService.getNewFindigsDTO());
+        model.addAttribute("fullRecipe", fullRecipe);
         model.addAttribute("ingredients", cookService.getAllIngredient());
         model.addAttribute("units", cookService.getAllUnit());
         model.addAttribute("recipeList", cookService.findAll());
-        return "cook";
-    }
-
-    @RequestMapping("/cook/addrow")
-    public String addRow(Model model) {
-        model.addAttribute("fullRecipe", new FullRecipe());
-        model.addAttribute("ingredients", cookService.getAllIngredient());
-        model.addAttribute("units", cookService.getAllUnit());
-        model.addAttribute("recipeList", cookService.findAll());
-        System.out.println("addrow");
         return "cook";
     }
 
     @RequestMapping(value = "/cook", method = RequestMethod.POST)
     public String addRecipe(@ModelAttribute("fullRecipe") FullRecipe fullrecipe, Model model) {
+        System.out.println("\n");
+        System.out.println(fullrecipe.toString());
         cookService.addRecipe(fullrecipe);
         model.addAttribute("recipeList", cookService.findAll());
         model.addAttribute("ingredients", cookService.getAllIngredient());
         model.addAttribute("units", cookService.getAllUnit());
-        model.addAttribute("fullRecipe", new FullRecipe());
+        FullRecipe fullRecipe = new FullRecipe();
+        fullRecipe.getFindingsList().add(cookService.getNewFindigsDTO());
+        model.addAttribute("fullRecipe", fullRecipe);
         return "cook";
     }
 
