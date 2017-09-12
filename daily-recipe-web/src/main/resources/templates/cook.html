@@ -12,7 +12,7 @@
     <script type='text/javascript'>
         $(document).ready(function () {
             var max_fields = 10; //maximum input boxes allowed
-            var wrapper = $("#recipe-findings"); //Fields wrapper
+            var wrapper = $("#added-recipe-findings"); //Fields wrapper
             var add_button = $("#add_field_button"); //Add button ID
 
             var x = 0; //initlal text box count
@@ -37,7 +37,7 @@
 
                 if (x < max_fields) { //max input box allowed
                     x++; //text box increment
-                    $(wrapper).append('<div style="margin-bottom: 25px" id="recipe-findings" class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
+                    $(wrapper).append('<div style="margin-bottom: 25px" id="recipe-findings' + x + '" class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
                     '                        <input type="hidden" name="findingsList[' + x + '].id" value=""/>\n' +
                     '                        <select class="form-control" id="findingsList[' + x + '].ingredientDTO.id" name="findingsList[' + x + '].ingredientDTO.id">\n' +
                     ingredientOptions +
@@ -49,13 +49,13 @@
                     '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
                     '                        <input type="text" class="form-control" id="findingsList[' + x + '].amount"\n' +
                     '                              name="findingsList[' + x + '].amount"\n' +
-                    '                               placeholder="amount"/></div>'
+                    '                               placeholder="amount"/><span id="delete" class="input-group-addon"><i class="glyphicon glyphicon-minus"></i></span></div>'
                 )
                     ; //add input box
                 }
             });
 
-            $(wrapper).on("click", ".remove_field", function (e) { //user click on remove text
+            $(wrapper).on("click", "#delete", function (e) { //user click on remove text
                 e.preventDefault();
                 $(this).parent('div').remove();
                 x--;
@@ -126,7 +126,7 @@
 
                     <div style="margin-bottom: 25px" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
-                        <input id="cook-description" type="text" class="form-control" name="description"
+                        <textarea id="cook-description" rows="5" class="form-control" name="description"
                                th:field="*{description}"
                                placeholder="description"/>
                     </div>
@@ -153,15 +153,16 @@
                         <select class="form-control" th:field="*{findingsList[__${iterationStatus.index}__].unitDTO.id}"
                                 id="findingsList[0]-unitDTO-id"
                                 th:name="*{findingsList[__${iterationStatus.index}__].unitDTO.id}">
-                            <option value="0">Select the unit</option>
+                            <option value="0">Unit...</option>
                             <option th:each="unit:${units}" th:value="${unit.id}" th:text="${unit.name}"></option>
                         </select>
                         <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
                         <input type="text" class="form-control" id="findingsList[0]-amount"
                                th:name="*{findingsList[__${iterationStatus.index}__].amount}"
                                th:field="*{findingsList[__${iterationStatus.index}__].amount}"
-                               placeholder="amount"/>
+                               placeholder="amount"/><span onclick="$(this).parent('div').remove();" id="delete" class="input-group-addon"><i class="glyphicon glyphicon-minus"></i></span>
                     </div>
+                    <div id="added-recipe-findings"></div>
 
 
                     <div style="margin-top:10px" class="form-group">
