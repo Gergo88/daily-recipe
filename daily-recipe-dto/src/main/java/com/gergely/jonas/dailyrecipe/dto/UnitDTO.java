@@ -14,7 +14,32 @@ public class UnitDTO {
         this.longName = longName;
     }
 
+    @Override
+    public String toString() {
+        return "UnitDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", longName='" + longName + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UnitDTO unitDTO = (UnitDTO) o;
+
+        return id != null ? id.equals(unitDTO.id) : unitDTO.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public Long getId() {
+
         return id;
     }
 

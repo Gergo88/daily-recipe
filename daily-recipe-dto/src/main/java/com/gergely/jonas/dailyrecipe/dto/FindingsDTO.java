@@ -25,6 +25,32 @@ public class FindingsDTO {
         this.amount = amount;
     }
 
+    @Override
+    public String toString() {
+        return "FindingsDTO{" +
+                "id=" + id +
+                ", recipe=" + recipe +
+                ", ingredientDTO=" + ingredientDTO +
+                ", unitDTO=" + unitDTO +
+                ", amount='" + amount + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FindingsDTO that = (FindingsDTO) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public Long getId() {
         return id;
     }

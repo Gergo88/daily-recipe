@@ -13,6 +13,21 @@ public class FullRecipe {
     public FullRecipe() {
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FullRecipe that = (FullRecipe) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public FullRecipe(Long id, String name, String comment, String description, List<FindingsDTO> findingsList, List<String> szovegList) {
         this.id = id;
         this.name = name;

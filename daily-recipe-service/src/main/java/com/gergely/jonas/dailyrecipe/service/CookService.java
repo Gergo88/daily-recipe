@@ -36,16 +36,23 @@ public class CookService {
     public void addRecipe(FullRecipe fullRecipe) {
         Recipe savedRecipe = recipeRepository.save(getRecipeFromFullRecipe(fullRecipe));
         List<Findings> findingsList = getFindigsListFromFullRecipe(fullRecipe);
-        for(int i = 0; i<findingsList.size(); i++) {
+        for (int i = 0; i < findingsList.size(); i++) {
             findingsList.get(i).setRecipe(savedRecipe);
         }
-        System.out.println(findingsList.toString());
+        deleteAllFindingsById(savedRecipe);
         findingsRepository.saveAll(findingsList);
+    }
+
+    private void deleteAllFindingsById(Recipe recipe) {
+        List<Findings> findingsList = findingsRepository.findAllByRecipe(recipe);
+        for (Findings findings : findingsList) {
+            findingsRepository.deleteById(findings.getId());
+        }
     }
 
     private List<Findings> getFindigsListFromFullRecipe(FullRecipe fullRecipe) {
         List<Findings> findingsList = new ArrayList<>();
-        for(FindingsDTO findingsDTO : fullRecipe.getFindingsList()) {
+        for (FindingsDTO findingsDTO : fullRecipe.getFindingsList()) {
             findingsList.add(getFindingsFromFindingsDTO(findingsDTO));
         }
         return findingsList;
@@ -53,7 +60,7 @@ public class CookService {
 
     private List<FindingsDTO> getFindigsDTOListFromRecipe(Recipe recipe) {
         List<FindingsDTO> findingsDTOList = new ArrayList<>();
-        for(Findings findings : recipe.getFindingsList()) {
+        for (Findings findings : recipe.getFindingsList()) {
             findingsDTOList.add(getFindingsDTOFromFindings(findings));
         }
         return findingsDTOList;
@@ -117,7 +124,17 @@ public class CookService {
         fullRecipe.setComment(recipe.orElse(null).getComment());
         fullRecipe.setDescription(recipe.orElse(null).getDescription());
         fullRecipe.setFindingsList(getFindigsDTOListFromRecipe(recipe.orElse(new Recipe())));
+        addFindingsDTOToFindingsList(fullRecipe);
         return fullRecipe;
+    }
+
+    private void addFindingsDTOToFindingsList(FullRecipe fullRecipe) {
+        if (fullRecipe.getFindingsList().size() < 1) {
+            FindingsDTO findingsDTO = new FindingsDTO();
+            findingsDTO.setIngredientDTO(new IngredientDTO());
+            findingsDTO.setUnitDTO(new UnitDTO());
+            fullRecipe.getFindingsList().add(findingsDTO);
+        }
     }
 
     private Recipe getRecipeFromFullRecipe(FullRecipe fullRecipe) {
@@ -145,7 +162,7 @@ public class CookService {
         IngredientDTO ingredientDTO = new IngredientDTO();
         ingredientDTO.setId(ingredient.getId());
         ingredientDTO.setName(ingredient.getName());
-        return  ingredientDTO;
+        return ingredientDTO;
     }
 
     public List<UnitDTO> getAllUnit() {
