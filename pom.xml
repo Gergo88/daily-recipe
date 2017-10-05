@@ -89,6 +89,10 @@
             <artifactId>thymeleaf-extras-springsecurity4</artifactId>
             <version>LATEST</version>
         </dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
 	</dependencies>
 
 	<repositories>

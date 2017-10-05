@@ -28,7 +28,7 @@ public class FullRecipe {
         return id != null ? id.hashCode() : 0;
     }
 
-    public FullRecipe(Long id, String name, String comment, String description, List<FindingsDTO> findingsList, List<String> szovegList) {
+    public FullRecipe(Long id, String name, String comment, String description, List<FindingsDTO> findingsList) {
         this.id = id;
         this.name = name;
         this.comment = comment;

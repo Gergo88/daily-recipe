@@ -2,7 +2,6 @@ package com.gergely.jonas.dailyrecipe.dto;
 
 public class FindingsDTO {
     private Long id;
-    private FullRecipe recipe;
     private IngredientDTO ingredientDTO;
     private UnitDTO unitDTO;
     private String amount;
@@ -10,16 +9,14 @@ public class FindingsDTO {
     public FindingsDTO() {
     }
 
-    public FindingsDTO(Long id, FullRecipe recipe, IngredientDTO ingredientDTO, UnitDTO unitDTO, String amount) {
+    public FindingsDTO(Long id, IngredientDTO ingredientDTO, UnitDTO unitDTO, String amount) {
         this.id = id;
-        this.recipe = recipe;
         this.ingredientDTO = ingredientDTO;
         this.unitDTO = unitDTO;
         this.amount = amount;
     }
 
-    public FindingsDTO(FullRecipe recipe, IngredientDTO ingredientDTO, UnitDTO unitDTO, String amount) {
-        this.recipe = recipe;
+    public FindingsDTO(IngredientDTO ingredientDTO, UnitDTO unitDTO, String amount) {
         this.ingredientDTO = ingredientDTO;
         this.unitDTO = unitDTO;
         this.amount = amount;
@@ -29,7 +26,6 @@ public class FindingsDTO {
     public String toString() {
         return "FindingsDTO{" +
                 "id=" + id +
-                ", recipe=" + recipe +
                 ", ingredientDTO=" + ingredientDTO +
                 ", unitDTO=" + unitDTO +
                 ", amount='" + amount + '\'' +
@@ -57,14 +53,6 @@ public class FindingsDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public FullRecipe getRecipe() {
-        return recipe;
-    }
-
-    public void setRecipe(FullRecipe recipe) {
-        this.recipe = recipe;
     }
 
     public IngredientDTO getIngredientDTO() {

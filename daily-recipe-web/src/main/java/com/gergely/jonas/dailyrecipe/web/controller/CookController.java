@@ -1,19 +1,16 @@
 package com.gergely.jonas.dailyrecipe.web.controller;
 
-import com.gergely.jonas.dailyrecipe.dto.FindingsDTO;
 import com.gergely.jonas.dailyrecipe.dto.FullRecipe;
-import com.gergely.jonas.dailyrecipe.dto.IngredientDTO;
-import com.gergely.jonas.dailyrecipe.dto.UnitDTO;
-import com.gergely.jonas.dailyrecipe.model.model.Findings;
 import com.gergely.jonas.dailyrecipe.service.CookService;
+import org.omg.CORBA.Request;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
+import javax.ws.rs.GET;
 
 @Controller
+@RequestMapping("/cook")
 public class CookController {
 
     private CookService cookService;
@@ -22,7 +19,7 @@ public class CookController {
         this.cookService = cookService;
     }
 
-    @RequestMapping(value = "/cook", method = RequestMethod.GET)
+    @GetMapping("")
     public String getCookPage(Model model) {
         FullRecipe fullRecipe = new FullRecipe();
         fullRecipe.getFindingsList().add(cookService.getNewFindigsDTO());
@@ -33,21 +30,14 @@ public class CookController {
         return "cook";
     }
 
-    @RequestMapping(value = "/cook", method = RequestMethod.POST)
-    public String addRecipe(@ModelAttribute("fullRecipe") FullRecipe fullrecipe, Model model) {
-        System.out.println("\n");
+    @PostMapping("")
+    public String addRecipe(@ModelAttribute("fullRecipe") FullRecipe fullrecipe) {
         System.out.println(fullrecipe.toString());
         cookService.addRecipe(fullrecipe);
-        model.addAttribute("recipeList", cookService.findAll());
-        model.addAttribute("ingredients", cookService.getAllIngredient());
-        model.addAttribute("units", cookService.getAllUnit());
-        FullRecipe fullRecipe = new FullRecipe();
-        fullRecipe.getFindingsList().add(cookService.getNewFindigsDTO());
-        model.addAttribute("fullRecipe", fullRecipe);
-        return "cook";
+        return "redirect:/cook";
     }
 
-    @RequestMapping("/cook/{id}")
+    @GetMapping("/{id}")
     public String editRecipe(@PathVariable("id") Long id, Model model) {
         FullRecipe editedFullRecipe = cookService.findById(id);
         model.addAttribute("fullRecipe", editedFullRecipe);
@@ -57,4 +47,9 @@ public class CookController {
         return "cook";
     }
 
+    @GetMapping(value = "/{id}/delete")
+    public String deleteRecipeById(@PathVariable("id") Long idToDelete) {
+        cookService.deleteRecipeById(idToDelete);
+        return "redirect:/cook";
+    }
 }
