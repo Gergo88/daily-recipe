@@ -35,6 +35,9 @@ public class FindingsToFindingsDTO implements Converter<Findings, FindingsDTO> {
         findingsDTO.setAmount(findings.getAmount());
         findingsDTO.setIngredientDTO(ingredientToIngredientDTO.convert(findings.getIngredient()));
         findingsDTO.setUnitDTO(unitToUnitDTO.convert(findings.getUnit()));
+        if (findings.getRecipe() != null) {
+            findingsDTO.setRecipeId(findings.getRecipe().getId());
+        }
 
         return findingsDTO;
     }

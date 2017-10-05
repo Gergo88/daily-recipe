@@ -13,14 +13,16 @@ import com.gergely.jonas.dailyrecipe.model.model.Findings;
 import com.gergely.jonas.dailyrecipe.model.model.Ingredient;
 import com.gergely.jonas.dailyrecipe.model.model.Recipe;
 import com.gergely.jonas.dailyrecipe.model.model.Unit;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
-public class CookServiceImpl implements CookService{
+public class CookServiceImpl implements CookService {
 
     private RecipeRepository recipeRepository;
     private IngredientRepository ingredientRepository;
@@ -30,8 +32,9 @@ public class CookServiceImpl implements CookService{
     private IngredientToIngredientDTO ingredientToIngredientDTO;
     private FullRecipeToRecipe fullRecipeToRecipe;
     private RecipeToFullRecipe recipeToFullRecipe;
+    private FindingsDTOToFindings findingsDTOToFindings;
 
-    public CookServiceImpl(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, UnitRepository unitRepository, FindingsRepository findingsRepository, UnitToUnitDTO unitToUnitDTO, IngredientToIngredientDTO ingredientToIngredientDTO, FullRecipeToRecipe fullRecipeToRecipe, RecipeToFullRecipe recipeToFullRecipe) {
+    public CookServiceImpl(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, UnitRepository unitRepository, FindingsRepository findingsRepository, UnitToUnitDTO unitToUnitDTO, IngredientToIngredientDTO ingredientToIngredientDTO, FullRecipeToRecipe fullRecipeToRecipe, RecipeToFullRecipe recipeToFullRecipe, FindingsDTOToFindings findingsDTOToFindings) {
         this.recipeRepository = recipeRepository;
         this.ingredientRepository = ingredientRepository;
         this.unitRepository = unitRepository;
@@ -40,20 +43,28 @@ public class CookServiceImpl implements CookService{
         this.ingredientToIngredientDTO = ingredientToIngredientDTO;
         this.fullRecipeToRecipe = fullRecipeToRecipe;
         this.recipeToFullRecipe = recipeToFullRecipe;
+        this.findingsDTOToFindings = findingsDTOToFindings;
     }
 
+    @Transactional
     public void addRecipe(FullRecipe fullRecipe) {
-
-        fullRecipe.setFindingsList(clearList(fullRecipe.getFindingsList()));
         System.out.println(fullRecipe.toString());
+        List<FindingsDTO> findingsDTOList = clearList(fullRecipe.getFindingsList());
+        fullRecipe.setFindingsList(new ArrayList<>());
         Recipe savedRecipe = recipeRepository.save(fullRecipeToRecipe.convert(fullRecipe));
-        List<Findings> findingsList = fullRecipeToRecipe.convert(fullRecipe).getFindingsList();
-        for (Findings aFindingsList : findingsList) {
-            aFindingsList.setRecipe(savedRecipe);
-        }
+        System.out.println(savedRecipe.toString());
         deleteAllFindingsById(savedRecipe);
-        findingsRepository.saveAll(findingsList);
+        saveFindingsToRecipe(findingsDTOList, savedRecipe);
 
+    }
+
+    private void saveFindingsToRecipe(List<FindingsDTO> findingsDTOList, Recipe recipe) {
+        List<Findings> findingsList = new ArrayList<>();
+        for (FindingsDTO findingsDTO : findingsDTOList) {
+            findingsDTO.setRecipeId(recipe.getId());
+            findingsList.add(findingsDTOToFindings.convert(findingsDTO));
+        }
+        findingsRepository.saveAll(findingsList);
     }
 
     private List<FindingsDTO> clearList(List<FindingsDTO> listToClear) {
@@ -83,7 +94,11 @@ public class CookServiceImpl implements CookService{
     }
 
     public FullRecipe findById(Long id) {
-        return recipeToFullRecipe.convert(recipeRepository.findById(id).orElse(null));
+        FullRecipe fullRecipe = recipeToFullRecipe.convert(recipeRepository.findById(id).orElse(null));
+        if (fullRecipe.getFindingsList().size() == 0) {
+            fullRecipe.getFindingsList().add(getNewFindigsDTO());
+        }
+        return fullRecipe;
     }
 
     public List<IngredientDTO> getAllIngredient() {

@@ -2,6 +2,7 @@ package com.gergely.jonas.dailyrecipe.converters;
 
 import com.gergely.jonas.dailyrecipe.dto.FindingsDTO;
 import com.gergely.jonas.dailyrecipe.model.model.Findings;
+import com.gergely.jonas.dailyrecipe.model.model.Recipe;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
@@ -34,6 +35,11 @@ public class FindingsDTOToFindings implements Converter<FindingsDTO, Findings> {
         findings.setAmount(findingsDTO.getAmount());
         findings.setIngredient(ingredientDTOToIngredient.convert(findingsDTO.getIngredientDTO()));
         findings.setUnit(unitDTOToUnit.convert(findingsDTO.getUnitDTO()));
+        if(findingsDTO.getRecipeId() != null){
+            Recipe recipe = new Recipe();
+            recipe.setId(findingsDTO.getRecipeId());
+            findings.setRecipe(recipe);
+        }
 
         return findings;
     }

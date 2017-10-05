@@ -32,7 +32,6 @@ public class CookController {
 
     @PostMapping("")
     public String addRecipe(@ModelAttribute("fullRecipe") FullRecipe fullrecipe) {
-        System.out.println(fullrecipe.toString());
         cookService.addRecipe(fullrecipe);
         return "redirect:/cook";
     }

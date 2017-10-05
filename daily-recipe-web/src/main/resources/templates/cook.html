@@ -11,14 +11,13 @@
 
     <script type='text/javascript'>
         $(document).ready(function () {
-            var max_fields = 10; //maximum input boxes allowed
+            var max_fields = 300; //maximum input boxes allowed
             var wrapper = $("#added-recipe-findings"); //Fields wrapper
             var add_button = $("#add_field_button"); //Add button ID
 
-            var x = $("div[id^=recipe-findings]").length; //initlal text box count
+            var x = $("div[id^=recipe-findings]").length - 1; //initlal text box count
                 $(add_button).click(function (e) {//on add input button click
                     e.preventDefault();
-                    x = $("div[id^=recipe-findings]").length - 1;
                     console.log(x);
                     var ingredientValues = document.getElementById('findingsList[0]-ingredientDTO-id').options;
                     var ingredientTexts = [];
@@ -58,8 +57,20 @@
 
             $(wrapper).on("click", "#delete", function (e) { //user click on remove text
                 e.preventDefault();
-                $(this).parent('div').remove();
-                x--;
+                console.log(($("div[id^=recipe-findings]").length - 1) > 0);
+                if (($("div[id^=recipe-findings]").length - 1) > 0) {
+                    console.log($("div[id^=recipe-findings]").length - 1);
+                    $(this).parent('div').remove();
+                }
+            })
+
+            $("#recipe-findings").on("click", "#delete", function (e) { //user click on remove text
+                e.preventDefault();
+                console.log(($("div[id^=recipe-findings]").length - 1) > 0);
+                if (($("div[id^=recipe-findings]").length - 1) > 0) {
+                    console.log($("div[id^=recipe-findings]").length - 1);
+                    $(this).parent('div').remove();
+                }
             })
         });
     </script>
@@ -166,7 +177,7 @@
                         <input type="text" class="form-control" id="findingsList[0]-amount"
                                th:name="*{findingsList[__${iterationStatus.index}__].amount}"
                                th:field="*{findingsList[__${iterationStatus.index}__].amount}"
-                               placeholder="amount"/><span onclick="$(this).parent('div').remove();" id="delete"
+                               placeholder="amount"/><span id="delete"
                                                            class="input-group-addon"><i
                             class="glyphicon glyphicon-minus"></i></span>
                     </div>
