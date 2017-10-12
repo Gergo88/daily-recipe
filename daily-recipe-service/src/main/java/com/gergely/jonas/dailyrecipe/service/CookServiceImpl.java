@@ -13,15 +13,17 @@ import com.gergely.jonas.dailyrecipe.model.model.Findings;
 import com.gergely.jonas.dailyrecipe.model.model.Ingredient;
 import com.gergely.jonas.dailyrecipe.model.model.Recipe;
 import com.gergely.jonas.dailyrecipe.model.model.Unit;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 @Service
+@Slf4j
 public class CookServiceImpl implements CookService {
 
     private RecipeRepository recipeRepository;
@@ -47,14 +49,20 @@ public class CookServiceImpl implements CookService {
     }
 
     @Transactional
+    @Override
     public void addRecipe(FullRecipe fullRecipe) {
-        System.out.println(fullRecipe.toString());
-        List<FindingsDTO> findingsDTOList = clearList(fullRecipe.getFindingsList());
-        fullRecipe.setFindingsList(new ArrayList<>());
-        Recipe savedRecipe = recipeRepository.save(fullRecipeToRecipe.convert(fullRecipe));
-        System.out.println(savedRecipe.toString());
-        deleteAllFindingsById(savedRecipe);
-        saveFindingsToRecipe(findingsDTOList, savedRecipe);
+        fullRecipe.getFindingsList().removeIf(finding -> finding.getAmount() != null && finding.getIngredientDTO() != null && finding.getUnitDTO() != null && !(new Long(0L).equals(finding.getUnitDTO().getId())) && !(new Long(0L).equals(finding.getIngredientDTO().getId())) && !("".equals(finding.getAmount())));
+        fullRecipe.getFindingsList().forEach(finding -> finding.setRecipeId(fullRecipe.getId()));
+        Recipe savedRecipe;
+        if (fullRecipe.getId() == null) {
+            savedRecipe = recipeRepository.save(fullRecipeToRecipe.convert(fullRecipe));
+        } else {
+            savedRecipe = fullRecipeToRecipe.convert(fullRecipe);
+            savedRecipe.setImage(recipeRepository.findById(fullRecipe.getId()).orElse(new Recipe()).getImage());
+            savedRecipe = recipeRepository.save(savedRecipe);
+        }
+        //deleteAllFindingsById(savedRecipe);
+        //saveFindingsToRecipe(findingsDTOList, savedRecipe);
 
     }
 
@@ -95,10 +103,15 @@ public class CookServiceImpl implements CookService {
 
     public FullRecipe findById(Long id) {
         FullRecipe fullRecipe = recipeToFullRecipe.convert(recipeRepository.findById(id).orElse(null));
-        if (fullRecipe.getFindingsList().size() == 0) {
+        if (fullRecipe != null && fullRecipe.getFindingsList() != null && fullRecipe.getFindingsList().size() == 0) {
             fullRecipe.getFindingsList().add(getNewFindigsDTO());
         }
         return fullRecipe;
+    }
+
+    @Override
+    public Byte[] getRecipeImageById(Long id) {
+        return recipeRepository.findById(id).orElse(new Recipe()).getImage();
     }
 
     public List<IngredientDTO> getAllIngredient() {

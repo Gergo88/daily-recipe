@@ -4,6 +4,7 @@ import com.gergely.jonas.dailyrecipe.dto.FindingsDTO;
 import com.gergely.jonas.dailyrecipe.dto.FullRecipe;
 import com.gergely.jonas.dailyrecipe.dto.IngredientDTO;
 import com.gergely.jonas.dailyrecipe.dto.UnitDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface CookService {
     FindingsDTO getNewFindigsDTO();
 
     void deleteRecipeById(Long idToDelete);
+
+    Byte[] getRecipeImageById(Long id);
 }

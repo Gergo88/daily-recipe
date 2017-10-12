@@ -17,14 +17,17 @@ public class Recipe {
     private String description;
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     private List<Findings> findingsList;
+    @Lob
+    private Byte[] image;
 
     public Recipe() {
     }
 
-    public Recipe(String name, String comment, String description) {
+    public Recipe(String name, String comment, String description, Byte[] image) {
         this.name = name;
         this.comment = comment;
         this.description = description;
+        this.image = image;
     }
 
     @Override
@@ -91,5 +94,13 @@ public class Recipe {
 
     public void setFindingsList(List<Findings> findingsList) {
         this.findingsList = findingsList;
+    }
+
+    public Byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(Byte[] image) {
+        this.image = image;
     }
 }

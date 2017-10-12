@@ -59,9 +59,9 @@ public class DevBootstrap implements ApplicationListener<ContextRefreshedEvent> 
 
         ingredientRepository.saveAll(ingredients);
 
-        Recipe recipe1 = new Recipe("name1", "comment1", "description1");
-        Recipe recipe2 = new Recipe("name2", "comment2", "description2");
-        Recipe recipe3 = new Recipe("name3", "comment3", "description3");
+        Recipe recipe1 = new Recipe("name1", "comment1", "description1", null);
+        Recipe recipe2 = new Recipe("name2", "comment2", "description2", null);
+        Recipe recipe3 = new Recipe("name3", "comment3", "description3", null);
 
         recipeRepository.save(recipe1);
         recipeRepository.save(recipe2);

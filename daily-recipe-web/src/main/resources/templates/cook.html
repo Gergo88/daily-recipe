@@ -16,44 +16,44 @@
             var add_button = $("#add_field_button"); //Add button ID
 
             var x = $("div[id^=recipe-findings]").length - 1; //initlal text box count
-                $(add_button).click(function (e) {//on add input button click
-                    e.preventDefault();
-                    console.log(x);
-                    var ingredientValues = document.getElementById('findingsList[0]-ingredientDTO-id').options;
-                    var ingredientTexts = [];
-                    var ingredientOptions = "";
-                    for (var i = 0; i < ingredientValues.length; i++) {
-                        ingredientTexts.push(document.getElementById('findingsList[0]-ingredientDTO-id').options.item(i));
-                        ingredientOptions = ingredientOptions + "<option value=" + ingredientValues[i].value + ">" + ingredientTexts[i].text + "</option>\n";
-                    }
+            $(add_button).click(function (e) {//on add input button click
+                e.preventDefault();
+                console.log(x);
+                var ingredientValues = document.getElementById('findingsList[0]-ingredientDTO-id').options;
+                var ingredientTexts = [];
+                var ingredientOptions = "";
+                for (var i = 0; i < ingredientValues.length; i++) {
+                    ingredientTexts.push(document.getElementById('findingsList[0]-ingredientDTO-id').options.item(i));
+                    ingredientOptions = ingredientOptions + "<option value=" + ingredientValues[i].value + ">" + ingredientTexts[i].text + "</option>\n";
+                }
 
-                    var unitValues = document.getElementById('findingsList[0]-unitDTO-id').options;
-                    var unitTexts = [];
-                    var unitOptions = "";
-                    for (var i = 0; i < unitValues.length; i++) {
-                        unitTexts.push(document.getElementById('findingsList[0]-unitDTO-id').options.item(i));
-                        unitOptions = unitOptions + "<option value=" + unitValues[i].value + ">" + unitTexts[i].text + "</option>\n";
-                    }
+                var unitValues = document.getElementById('findingsList[0]-unitDTO-id').options;
+                var unitTexts = [];
+                var unitOptions = "";
+                for (var i = 0; i < unitValues.length; i++) {
+                    unitTexts.push(document.getElementById('findingsList[0]-unitDTO-id').options.item(i));
+                    unitOptions = unitOptions + "<option value=" + unitValues[i].value + ">" + unitTexts[i].text + "</option>\n";
+                }
 
-                    if (x < max_fields) { //max input box allowed
-                        x++; //text box increment
-                        $(wrapper).append('<div style="margin-bottom: 25px" id="recipe-findings" class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
-                            '                        <input type="hidden" name="findingsList[' + x + '].id" value=""/>\n' +
-                            '                        <select class="form-control" id="findingsList[' + x + '].ingredientDTO.id" name="findingsList[' + x + '].ingredientDTO.id">\n' +
-                            ingredientOptions +
-                            '                        </select>\n' +
-                            '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
-                            '                        <select class="form-control" id="findingsList[' + x + '].unitDTO.id" name="findingsList[' + x + '].unitDTO.id">\n' +
-                            unitOptions +
-                            '                        </select>\n' +
-                            '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
-                            '                        <input type="text" class="form-control" id="findingsList[' + x + '].amount"\n' +
-                            '                              name="findingsList[' + x + '].amount"\n' +
-                            '                               placeholder="amount"/><span id="delete" class="input-group-addon"><i class="glyphicon glyphicon-minus"></i></span></div>'
-                        )
-                        ; //add input box
-                    }
-                });
+                if (x < max_fields) { //max input box allowed
+                    x++; //text box increment
+                    $(wrapper).append('<div style="margin-bottom: 25px" id="recipe-findings" class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
+                        '                        <input type="hidden" name="findingsList[' + x + '].id" value=""/>\n' +
+                        '                        <select class="form-control" id="findingsList[' + x + '].ingredientDTO.id" name="findingsList[' + x + '].ingredientDTO.id">\n' +
+                        ingredientOptions +
+                        '                        </select>\n' +
+                        '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
+                        '                        <select class="form-control" id="findingsList[' + x + '].unitDTO.id" name="findingsList[' + x + '].unitDTO.id">\n' +
+                        unitOptions +
+                        '                        </select>\n' +
+                        '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
+                        '                        <input type="text" class="form-control" id="findingsList[' + x + '].amount"\n' +
+                        '                              name="findingsList[' + x + '].amount"\n' +
+                        '                               placeholder="amount"/><span id="delete" class="input-group-addon"><i class="glyphicon glyphicon-minus"></i></span></div>'
+                    )
+                    ; //add input box
+                }
+            });
 
             $(wrapper).on("click", "#delete", function (e) { //user click on remove text
                 e.preventDefault();
@@ -98,12 +98,12 @@
                 <td>
                     <div class="row">
                         <div class="form-group col-xs-6">
-                                <a href="#" th:href="@{'/cook/' + ${recipe.id}}" class="btn btn-default btn-sm">
-                                    <span class="glyphicon glyphicon-edit"></span> Edit
-                                </a>
-                                <a class="btn btn-default btn-sm" href="#" th:href="@{'/cook/' + ${recipe.id} + '/delete'}">
-                                    <span class="glyphicon glyphicon-remove"></span> Delete
-                                </a>
+                            <a href="#" th:href="@{'/cook/' + ${recipe.id}}" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-edit"></span> Edit
+                            </a>
+                            <a class="btn btn-default btn-sm" href="#" th:href="@{'/cook/' + ${recipe.id} + '/delete'}">
+                                <span class="glyphicon glyphicon-remove"></span> Delete
+                            </a>
                         </div>
                     </div>
                 </td>
@@ -125,7 +125,7 @@
                 </div>
 
                 <form id="cookform" class="form-horizontal" role="form" th:action="@{/cook}" th:object="${fullRecipe}"
-                      method="post">
+                      method="post" enctype="multipart/form-data">
 
                     <input type="hidden" id="cook-id" name="id" th:field="*{id}"/>
 
@@ -146,6 +146,21 @@
                         <textarea id="cook-description" rows="5" class="form-control" name="description"
                                   th:field="*{description}"
                                   placeholder="description"/>
+                    </div>
+
+                    <div th:if="*{id}== null" style="margin-bottom: 25px" class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
+                        <input id="image" name="image" type="file" class="file">
+                    </div>
+
+                    <div class="input-group" style="margin-bottom: 25px" th:if="*{image}!=null">
+                        <img src="{/images/no-image-available.jpg}"
+                             th:src="@{'/cook/' + *{id} + '/recipeimage'}"
+                             width="200" height="200">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 25px" th:if="*{image}==null and *{id}!=null">
+                        <img src="/images/no-image-available.jpg"
+                             width="200" height="200">
                     </div>
 
                     <div style="margin-bottom: 25px" id="add_recipe-findings" class="input-group">

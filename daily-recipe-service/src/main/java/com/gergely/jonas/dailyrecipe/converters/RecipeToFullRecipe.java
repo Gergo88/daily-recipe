@@ -7,7 +7,9 @@ import com.gergely.jonas.dailyrecipe.model.model.Recipe;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,9 @@ public class RecipeToFullRecipe implements Converter<Recipe, FullRecipe> {
         fullRecipe.setComment(recipe.getComment());
         fullRecipe.setDescription(recipe.getDescription());
         fullRecipe.setName(recipe.getName());
+        if (recipe.getImage() != null) {
+            fullRecipe.setImage(new MockMultipartFile("mock", new byte[0]));
+        }
 
         List<FindingsDTO> findingsDTOList = new ArrayList<>();
         for (Findings findings : recipe.getFindingsList()) {

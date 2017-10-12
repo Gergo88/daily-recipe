@@ -1,5 +1,7 @@
 package com.gergely.jonas.dailyrecipe.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +11,7 @@ public class FullRecipe {
     private String comment;
     private String description;
     private List<FindingsDTO> findingsList;
+    private MultipartFile image;
 
     public FullRecipe() {
     }
@@ -28,14 +31,6 @@ public class FullRecipe {
         return id != null ? id.hashCode() : 0;
     }
 
-    public FullRecipe(Long id, String name, String comment, String description, List<FindingsDTO> findingsList) {
-        this.id = id;
-        this.name = name;
-        this.comment = comment;
-        this.description = description;
-        this.findingsList = findingsList;
-    }
-
     public List<FindingsDTO> getFindingsList() {
         if (findingsList == null) {
             findingsList = new ArrayList<>();
@@ -51,6 +46,7 @@ public class FullRecipe {
                 ", comment='" + comment + '\'' +
                 ", description='" + description + '\'' +
                 ", findingsList=" + findingsList +
+                ", image=" + image +
                 '}';
     }
 
@@ -88,5 +84,13 @@ public class FullRecipe {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
     }
 }
