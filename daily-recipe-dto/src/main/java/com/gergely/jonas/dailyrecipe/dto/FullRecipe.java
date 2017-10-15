@@ -1,12 +1,16 @@
 package com.gergely.jonas.dailyrecipe.dto;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FullRecipe {
     private Long id;
+    @NotNull
+    @NotEmpty
     private String name;
     private String comment;
     private String description;

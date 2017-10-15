@@ -127,14 +127,26 @@
                 <form id="cookform" class="form-horizontal" role="form" th:action="@{/cook}" th:object="${fullRecipe}"
                       method="post" enctype="multipart/form-data">
 
+
+                    <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                        <p>Please Correct Errors Below</p>
+                    </div>
+
                     <input type="hidden" id="cook-id" name="id" th:field="*{id}"/>
 
-                    <div style="margin-bottom: 25px" class="input-group">
+                    <div style="margin-bottom: 25px" class="input-group" th:class="${#fields.hasErrors('name')}
+                                ? 'input-group has-error' : 'input-group'">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
                         <input id="cook-name" type="text" class="form-control" name="name" th:field="*{name}"
                                placeholder="name">
                     </div>
-
+                    <div class="input-group has-error" th:if="${#fields.hasErrors('name')}">
+                    <span class="help-block" >
+                                        <ul>
+                                            <li th:each="err : ${#fields.errors('name')}" th:text="${err}" ></li>
+                                        </ul>
+                    </span>
+                    </div>
                     <div style="margin-bottom: 25px" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
                         <input id="cook-comment" type="text" class="form-control" name="comment" th:field="*{comment}"
@@ -153,7 +165,7 @@
                         <input id="image" name="image" type="file" class="file">
                     </div>
 
-                    <div class="input-group" style="margin-bottom: 25px" th:if="*{image}!=null">
+                    <div class="input-group" style="margin-bottom: 25px" th:if="*{image}!=null and *{id}!=null">
                         <img src="{/images/no-image-available.jpg}"
                              th:src="@{'/cook/' + *{id} + '/recipeimage'}"
                              width="200" height="200">

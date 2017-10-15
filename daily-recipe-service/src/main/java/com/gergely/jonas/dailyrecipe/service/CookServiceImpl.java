@@ -51,8 +51,8 @@ public class CookServiceImpl implements CookService {
     @Transactional
     @Override
     public void addRecipe(FullRecipe fullRecipe) {
-        fullRecipe.getFindingsList().removeIf(finding -> finding.getAmount() != null && finding.getIngredientDTO() != null && finding.getUnitDTO() != null && !(new Long(0L).equals(finding.getUnitDTO().getId())) && !(new Long(0L).equals(finding.getIngredientDTO().getId())) && !("".equals(finding.getAmount())));
-        fullRecipe.getFindingsList().forEach(finding -> finding.setRecipeId(fullRecipe.getId()));
+        log.info("Recipe to save: " + fullRecipe.toString());
+        fullRecipe.getFindingsList().removeIf(finding -> finding.getAmount() == null && finding.getIngredientDTO() == null && finding.getUnitDTO() == null && (new Long(0L).equals(finding.getUnitDTO().getId())) && (new Long(0L).equals(finding.getIngredientDTO().getId())) && ("".equals(finding.getAmount())));
         Recipe savedRecipe;
         if (fullRecipe.getId() == null) {
             savedRecipe = recipeRepository.save(fullRecipeToRecipe.convert(fullRecipe));

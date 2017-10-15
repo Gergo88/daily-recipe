@@ -2,14 +2,17 @@ package com.gergely.jonas.dailyrecipe.web.controller;
 
 import com.gergely.jonas.dailyrecipe.dto.FullRecipe;
 import com.gergely.jonas.dailyrecipe.service.CookService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.omg.CORBA.Request;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.ws.rs.GET;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -17,6 +20,7 @@ import java.io.InputStream;
 
 @Controller
 @RequestMapping("/cook")
+@Slf4j
 public class CookController {
 
     private CookService cookService;
@@ -37,7 +41,20 @@ public class CookController {
     }
 
     @PostMapping("")
-    public String addRecipe(@ModelAttribute("fullRecipe") FullRecipe fullrecipe) {
+    public String addRecipe(@Valid @ModelAttribute("fullRecipe") FullRecipe fullrecipe, BindingResult bindingResult, Model model) {
+        if(bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(objectError -> {
+                log.warn(objectError.toString());
+            });
+//            FullRecipe fullRecipe = new FullRecipe();
+//            fullRecipe.getFindingsList().add(cookService.getNewFindigsDTO());
+            model.addAttribute("fullRecipe", fullrecipe);
+
+            model.addAttribute("ingredients", cookService.getAllIngredient());
+            model.addAttribute("units", cookService.getAllUnit());
+            model.addAttribute("recipeList", cookService.findAll());
+            return "cook";
+        }
         cookService.addRecipe(fullrecipe);
         return "redirect:/cook";
     }
