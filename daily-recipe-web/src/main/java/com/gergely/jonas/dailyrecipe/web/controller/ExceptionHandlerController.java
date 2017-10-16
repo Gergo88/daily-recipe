@@ -1,5 +1,6 @@
 package com.gergely.jonas.dailyrecipe.web.controller;
 
+import com.gergely.jonas.dailyrecipe.exception.RecipeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -17,5 +18,13 @@ public class ExceptionHandlerController {
         model.addAttribute("exception", e);
         log.error("Wrong recipe id - NumberFormatException! " + e.getMessage());
         return "error/400error";
+    }
+
+    @ExceptionHandler(RecipeNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleRecipeNotFoundException(RecipeNotFoundException e, Model model) {
+        model.addAttribute("exception", e);
+        log.error("NotFoundException - " + e.getMessage());
+        return "error/404error";
     }
 }

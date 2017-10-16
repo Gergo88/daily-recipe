@@ -29,6 +29,11 @@ public class CookController {
         this.cookService = cookService;
     }
 
+    @GetMapping("/aaa")
+    public String getaaa() {
+        return "aaa";
+    }
+
     @GetMapping("")
     public String getCookPage(Model model) {
         FullRecipe fullRecipe = new FullRecipe();
@@ -46,10 +51,7 @@ public class CookController {
             bindingResult.getAllErrors().forEach(objectError -> {
                 log.warn(objectError.toString());
             });
-//            FullRecipe fullRecipe = new FullRecipe();
-//            fullRecipe.getFindingsList().add(cookService.getNewFindigsDTO());
             model.addAttribute("fullRecipe", fullrecipe);
-
             model.addAttribute("ingredients", cookService.getAllIngredient());
             model.addAttribute("units", cookService.getAllUnit());
             model.addAttribute("recipeList", cookService.findAll());
@@ -57,6 +59,12 @@ public class CookController {
         }
         cookService.addRecipe(fullrecipe);
         return "redirect:/cook";
+    }
+
+    @PostMapping("/upload")
+    public String uploadPicture(@ModelAttribute("fullRecipe") FullRecipe fullrecipe) {
+        cookService.uploadPictureForRecipe(fullrecipe);
+        return "redirect:/cook/" + fullrecipe.getId();
     }
 
     @GetMapping("/{id}")
@@ -73,6 +81,12 @@ public class CookController {
     public String deleteRecipeById(@PathVariable("id") Long idToDelete) {
         cookService.deleteRecipeById(idToDelete);
         return "redirect:/cook";
+    }
+
+    @GetMapping(value = "/{id}/delete/picture")
+    public String deletePictureOfRecipe(@PathVariable("id") Long recipeId) {
+        cookService.deletePictureOfRecipe(recipeId);
+        return "redirect:/cook/" + recipeId;
     }
 
     @GetMapping("/{id}/recipeimage")

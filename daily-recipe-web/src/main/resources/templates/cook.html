@@ -18,20 +18,20 @@
             var x = $("div[id^=recipe-findings]").length - 1; //initlal text box count
             $(add_button).click(function (e) {//on add input button click
                 e.preventDefault();
-                console.log(x);
-                var ingredientValues = document.getElementById('findingsList[0]-ingredientDTO-id').options;
+
+                var ingredientValues = document.getElementById('findingsList-ingredientDTO-id').options;
                 var ingredientTexts = [];
                 var ingredientOptions = "";
                 for (var i = 0; i < ingredientValues.length; i++) {
-                    ingredientTexts.push(document.getElementById('findingsList[0]-ingredientDTO-id').options.item(i));
+                    ingredientTexts.push(document.getElementById('findingsList-ingredientDTO-id').options.item(i));
                     ingredientOptions = ingredientOptions + "<option value=" + ingredientValues[i].value + ">" + ingredientTexts[i].text + "</option>\n";
                 }
 
-                var unitValues = document.getElementById('findingsList[0]-unitDTO-id').options;
+                var unitValues = document.getElementById('findingsList-unitDTO-id').options;
                 var unitTexts = [];
                 var unitOptions = "";
                 for (var i = 0; i < unitValues.length; i++) {
-                    unitTexts.push(document.getElementById('findingsList[0]-unitDTO-id').options.item(i));
+                    unitTexts.push(document.getElementById('findingsList-unitDTO-id').options.item(i));
                     unitOptions = unitOptions + "<option value=" + unitValues[i].value + ">" + unitTexts[i].text + "</option>\n";
                 }
 
@@ -39,15 +39,15 @@
                     x++; //text box increment
                     $(wrapper).append('<div style="margin-bottom: 25px" id="recipe-findings" class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
                         '                        <input type="hidden" name="findingsList[' + x + '].id" value=""/>\n' +
-                        '                        <select class="form-control" id="findingsList[' + x + '].ingredientDTO.id" name="findingsList[' + x + '].ingredientDTO.id">\n' +
+                        '                        <select class="form-control" id="findingsList-ingredientDTO-id" name="findingsList[' + x + '].ingredientDTO.id">\n' +
                         ingredientOptions +
                         '                        </select>\n' +
                         '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
-                        '                        <select class="form-control" id="findingsList[' + x + '].unitDTO.id" name="findingsList[' + x + '].unitDTO.id">\n' +
+                        '                        <select class="form-control" id="findingsList-unitDTO-id" name="findingsList[' + x + '].unitDTO.id">\n' +
                         unitOptions +
                         '                        </select>\n' +
                         '                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>\n' +
-                        '                        <input type="text" class="form-control" id="findingsList[' + x + '].amount"\n' +
+                        '                        <input type="number" class="form-control" id="findingsList-amount"\n' +
                         '                              name="findingsList[' + x + '].amount"\n' +
                         '                               placeholder="amount"/><span id="delete" class="input-group-addon"><i class="glyphicon glyphicon-minus"></i></span></div>'
                     )
@@ -55,23 +55,12 @@
                 }
             });
 
-            $(wrapper).on("click", "#delete", function (e) { //user click on remove text
+            $("#valami").on("click", "#delete", function (e) { //user click on remove icon
                 e.preventDefault();
-                console.log(($("div[id^=recipe-findings]").length - 1) > 0);
                 if (($("div[id^=recipe-findings]").length - 1) > 0) {
-                    console.log($("div[id^=recipe-findings]").length - 1);
                     $(this).parent('div').remove();
                 }
-            })
-
-            $("#recipe-findings").on("click", "#delete", function (e) { //user click on remove text
-                e.preventDefault();
-                console.log(($("div[id^=recipe-findings]").length - 1) > 0);
-                if (($("div[id^=recipe-findings]").length - 1) > 0) {
-                    console.log($("div[id^=recipe-findings]").length - 1);
-                    $(this).parent('div').remove();
-                }
-            })
+            });
         });
     </script>
 
@@ -117,7 +106,7 @@
                 <div class="panel-title">Add recipe</div>
             </div>
 
-            <div style="padding-top:30px" class="panel-body">
+            <div style="padding-top:30px" class="panel-body" id="valami">
                 <div th:if="${param.error}">
                     <div id="cook-alert" class="alert alert-danger col-sm-12">
                         Error
@@ -141,38 +130,76 @@
                                placeholder="name">
                     </div>
                     <div class="input-group has-error" th:if="${#fields.hasErrors('name')}">
-                    <span class="help-block" >
+                    <span class="help-block">
                                         <ul>
-                                            <li th:each="err : ${#fields.errors('name')}" th:text="${err}" ></li>
+                                            <li th:each="err : ${#fields.errors('name')}" th:text="${err}"></li>
                                         </ul>
                     </span>
                     </div>
-                    <div style="margin-bottom: 25px" class="input-group">
+
+                    <div style="margin-bottom: 25px" class="input-group" th:class="${#fields.hasErrors('comment')}
+                                ? 'input-group has-error' : 'input-group'">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
                         <input id="cook-comment" type="text" class="form-control" name="comment" th:field="*{comment}"
                                placeholder="comment">
                     </div>
+                    <div class="input-group has-error" th:if="${#fields.hasErrors('comment')}">
+                    <span class="help-block">
+                                        <ul>
+                                            <li th:each="err : ${#fields.errors('comment')}" th:text="${err}"></li>
+                                        </ul>
+                    </span>
+                    </div>
 
-                    <div style="margin-bottom: 25px" class="input-group">
+                    <div style="margin-bottom: 25px" class="input-group" th:class="${#fields.hasErrors('description')}
+                                ? 'input-group has-error' : 'input-group'">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
                         <textarea id="cook-description" rows="5" class="form-control" name="description"
                                   th:field="*{description}"
-                                  placeholder="description"/>
+                                  placeholder="description"></textarea>
+                    </div>
+                    <div class="input-group has-error" th:if="${#fields.hasErrors('description')}">
+                    <span class="help-block">
+                                        <ul>
+                                            <li th:each="err : ${#fields.errors('description')}" th:text="${err}"></li>
+                                        </ul>
+                    </span>
                     </div>
 
                     <div th:if="*{id}== null" style="margin-bottom: 25px" class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
-                        <input id="image" name="image" type="file" class="file">
+                        <span id="fileselector">
+                            <label class="btn btn-default" for="image">
+                                <input id="image" name="image" type="file">
+                            </label>
+                        </span>
                     </div>
 
+                    <script th:inline="javascript" type="text/javascript">
+                        $(document).ready(function () {
+                            $('#upload').on('click', function (e) {
+                                $("#myModal").modal();
+                            })
+                        });
+                    </script>
+
                     <div class="input-group" style="margin-bottom: 25px" th:if="*{image}!=null and *{id}!=null">
-                        <img src="{/images/no-image-available.jpg}"
+                        <img id="recipe-image" src="{/images/no-image-available.jpg}"
                              th:src="@{'/cook/' + *{id} + '/recipeimage'}"
-                             width="200" height="200">
+                             width="200" height="200" style="margin-right: 10px">
+                        <a style="margin-right: 10px; vertical-align: top;" class="btn btn-default btn-sm" href="#"
+                           th:href="@{'/cook/' + *{id} + '/delete/picture'}">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                        <a class="btn btn-default btn-sm" id="upload" style="vertical-align: top;">
+                            <span class="glyphicon glyphicon-upload"></span>
+                        </a>
                     </div>
                     <div class="input-group" style="margin-bottom: 25px" th:if="*{image}==null and *{id}!=null">
-                        <img src="/images/no-image-available.jpg"
-                             width="200" height="200">
+                        <img id="recipe-image" src="/images/no-image-available.jpg"
+                             width="200" height="200" style="margin-right: 10px">
+                        <a class="btn btn-default btn-sm" id="upload" style="vertical-align: top;">
+                            <span class="glyphicon glyphicon-upload"></span>
+                        </a>
                     </div>
 
                     <div style="margin-bottom: 25px" id="add_recipe-findings" class="input-group">
@@ -188,20 +215,20 @@
                         <select class="form-control"
                                 th:field="*{findingsList[__${iterationStatus.index}__].ingredientDTO.id}"
                                 th:name="*{findingsList[__${iterationStatus.index}__].ingredientDTO.id}"
-                                id="findingsList[0]-ingredientDTO-id">
+                                id="findingsList-ingredientDTO-id">
                             <option value="0">Ingredient...</option>
                             <option th:each="ingredient:${ingredients}" th:value="${ingredient.id}"
                                     th:text="${ingredient.name}"></option>
                         </select>
                         <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
                         <select class="form-control" th:field="*{findingsList[__${iterationStatus.index}__].unitDTO.id}"
-                                id="findingsList[0]-unitDTO-id"
+                                id="findingsList-unitDTO-id"
                                 th:name="*{findingsList[__${iterationStatus.index}__].unitDTO.id}">
                             <option value="0">Unit...</option>
                             <option th:each="unit:${units}" th:value="${unit.id}" th:text="${unit.name}"></option>
                         </select>
                         <span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>
-                        <input type="text" class="form-control" id="findingsList[0]-amount"
+                        <input type="number" class="form-control" id="findingsList-amount"
                                th:name="*{findingsList[__${iterationStatus.index}__].amount}"
                                th:field="*{findingsList[__${iterationStatus.index}__].amount}"
                                placeholder="amount"/><span id="delete"
@@ -213,7 +240,6 @@
 
                     <div style="margin-top:10px" class="form-group">
                         <!-- Button -->
-
                         <div th:if="*{id}!= null" class="col-sm-12 controls">
                             <input id="btn-cook" class="btn btn-success" type="submit" value="Modify"/>
                             <a th:href="@{/cook}" id="btn-cook" class="btn btn-warning" role="button">Cancel</a>
@@ -227,6 +253,71 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Upload image</h4>
+                </div>
+                <div class="modal-body" id="myModalBody">
+                    <form id="uploadPicture" class="form-horizontal" role="form" th:action="@{/cook/upload}"
+                          th:object="${fullRecipe}"
+                          method="post" enctype="multipart/form-data">
+                        <input type="hidden" id="recipeId" name="id" th:field="*{id}"/>
+                        <div style="margin-bottom: 25px" class="input-group">
+                            <span id="fileselector">
+                            <label class="btn btn-default" for="image">
+                                <input id="image" name="image" type="file">
+                            </label>
+                        </span>
+                        </div>
+
+                        <div style="margin-top:10px" class="form-group">
+                            <!-- Button -->
+                            <div class="col-sm-12 controls">
+                                <input id="btn-upload-image" class="btn btn-success" type="submit" value="Upload"/>
+                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--<div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>-->
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <script th:inline="javascript" type="text/javascript">
+        // Get the modal
+        var modal = document.getElementById('myViewer');
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        var img = document.getElementById('recipe-image');
+        var defaultImg = "images/no-image-available.jpg";
+        img.onclick = function () {
+            if (img.src.indexOf(defaultImg) === -1) {
+                $("#myViewer").modal();
+            }
+        }
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+    </script>
+
+    <div class="modal fade" id="myViewer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-body" id="myModalBody">
+                    <img class="modal-content" id="img01" th:src="@{'/cook/' + *{id} + '/recipeimage'}" style="">
+                </div>
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
 </div>
 </body>

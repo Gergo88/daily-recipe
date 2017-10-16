@@ -12,7 +12,11 @@ public class FullRecipe {
     @NotNull
     @NotEmpty
     private String name;
+    @NotNull
+    @NotEmpty
     private String comment;
+    @NotNull
+    @NotEmpty
     private String description;
     private List<FindingsDTO> findingsList;
     private MultipartFile image;

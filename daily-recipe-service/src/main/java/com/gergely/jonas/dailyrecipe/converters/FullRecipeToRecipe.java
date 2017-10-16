@@ -41,7 +41,7 @@ public class FullRecipeToRecipe implements Converter<FullRecipe, Recipe> {
         recipe.setComment(fullRecipe.getComment());
         recipe.setDescription(fullRecipe.getDescription());
         recipe.setName(fullRecipe.getName());
-        if (fullRecipe.getImage() != null) {
+        if (fullRecipe.getImage() != null && fullRecipe.getImage().getSize() > 0) {
             try {
 
                 Byte[] byteObjects = new Byte[fullRecipe.getImage().getBytes().length];

@@ -9,6 +9,7 @@ import com.gergely.jonas.dailyrecipe.dto.FindingsDTO;
 import com.gergely.jonas.dailyrecipe.dto.FullRecipe;
 import com.gergely.jonas.dailyrecipe.dto.IngredientDTO;
 import com.gergely.jonas.dailyrecipe.dto.UnitDTO;
+import com.gergely.jonas.dailyrecipe.exception.RecipeNotFoundException;
 import com.gergely.jonas.dailyrecipe.model.model.Findings;
 import com.gergely.jonas.dailyrecipe.model.model.Ingredient;
 import com.gergely.jonas.dailyrecipe.model.model.Recipe;
@@ -16,10 +17,7 @@ import com.gergely.jonas.dailyrecipe.model.model.Unit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -52,47 +50,47 @@ public class CookServiceImpl implements CookService {
     @Override
     public void addRecipe(FullRecipe fullRecipe) {
         log.info("Recipe to save: " + fullRecipe.toString());
-        fullRecipe.getFindingsList().removeIf(finding -> finding.getAmount() == null && finding.getIngredientDTO() == null && finding.getUnitDTO() == null && (new Long(0L).equals(finding.getUnitDTO().getId())) && (new Long(0L).equals(finding.getIngredientDTO().getId())) && ("".equals(finding.getAmount())));
+        fullRecipe.getFindingsList().removeIf(finding -> finding == null || finding.getAmount() == null || finding.getIngredientDTO() == null || finding.getUnitDTO() == null || (new Long(0L).equals(finding.getUnitDTO().getId())) || (new Long(0L).equals(finding.getIngredientDTO().getId())) || ("".equals(finding.getAmount())));
+        List<FindingsDTO> findingsDTOListToSave = fullRecipe.getFindingsList();
+        fullRecipe.setFindingsList(new ArrayList<>());
         Recipe savedRecipe;
         if (fullRecipe.getId() == null) {
             savedRecipe = recipeRepository.save(fullRecipeToRecipe.convert(fullRecipe));
+            Long recipeId = savedRecipe.getId();
+            findingsDTOListToSave.forEach(findingsDTO -> findingsDTO.setRecipeId(recipeId));
+            saveFindingsToRecipe(findingsDTOListToSave, savedRecipe);
         } else {
+            List<Findings> oldFindingsList = recipeRepository.findById(fullRecipe.getId()).orElse(null).getFindingsList();
+            deleteDeletedFindings(findingsDTOListToSave, oldFindingsList);
             savedRecipe = fullRecipeToRecipe.convert(fullRecipe);
             savedRecipe.setImage(recipeRepository.findById(fullRecipe.getId()).orElse(new Recipe()).getImage());
+            savedRecipe.setFindingsList(new ArrayList<>());
             savedRecipe = recipeRepository.save(savedRecipe);
+            Long recipeId = savedRecipe.getId();
+            findingsDTOListToSave.forEach(findingsDTO -> findingsDTO.setRecipeId(recipeId));
+            saveFindingsToRecipe(findingsDTOListToSave, savedRecipe);
         }
-        //deleteAllFindingsById(savedRecipe);
-        //saveFindingsToRecipe(findingsDTOList, savedRecipe);
+    }
 
+    private void deleteDeletedFindings(List<FindingsDTO> newFindingsList, List<Findings> oldFindingsList) {
+        List<Long> oldFindingIds = new ArrayList<>();
+        List<Long> newFindingIds = new ArrayList<>();
+        oldFindingsList.forEach(finding -> oldFindingIds.add(finding.getId()));
+        newFindingsList.forEach(findingsDTO -> newFindingIds.add(findingsDTO.getId()));
+        oldFindingIds.forEach(aLong -> {
+            if (!newFindingIds.contains(aLong)) {
+                findingsRepository.deleteById(aLong);
+            }
+        });
     }
 
     private void saveFindingsToRecipe(List<FindingsDTO> findingsDTOList, Recipe recipe) {
         List<Findings> findingsList = new ArrayList<>();
-        for (FindingsDTO findingsDTO : findingsDTOList) {
+        findingsDTOList.forEach(findingsDTO -> {
             findingsDTO.setRecipeId(recipe.getId());
             findingsList.add(findingsDTOToFindings.convert(findingsDTO));
-        }
+        });
         findingsRepository.saveAll(findingsList);
-    }
-
-    private List<FindingsDTO> clearList(List<FindingsDTO> listToClear) {
-
-        List<FindingsDTO> clearedList = new ArrayList<>();
-
-        for (FindingsDTO findingsDTO : listToClear) {
-            if (findingsDTO.getAmount() != null && findingsDTO.getIngredientDTO() != null && findingsDTO.getUnitDTO() != null && !(new Long(0L).equals(findingsDTO.getUnitDTO().getId())) && !(new Long(0L).equals(findingsDTO.getIngredientDTO().getId())) && !("".equals(findingsDTO.getAmount()))) {
-                clearedList.add(findingsDTO);
-            }
-        }
-
-        return clearedList;
-    }
-
-    private void deleteAllFindingsById(Recipe recipe) {
-        List<Findings> findingsList = findingsRepository.findAllByRecipe(recipe);
-        for (Findings findings : findingsList) {
-            findingsRepository.deleteById(findings.getId());
-        }
     }
 
     public Set<FullRecipe> findAll() {
@@ -102,7 +100,7 @@ public class CookServiceImpl implements CookService {
     }
 
     public FullRecipe findById(Long id) {
-        FullRecipe fullRecipe = recipeToFullRecipe.convert(recipeRepository.findById(id).orElse(null));
+        FullRecipe fullRecipe = recipeToFullRecipe.convert(recipeRepository.findById(id).orElseThrow( () -> new RecipeNotFoundException("Recipe does not exist with id: " + id)));
         if (fullRecipe != null && fullRecipe.getFindingsList() != null && fullRecipe.getFindingsList().size() == 0) {
             fullRecipe.getFindingsList().add(getNewFindigsDTO());
         }
@@ -112,6 +110,21 @@ public class CookServiceImpl implements CookService {
     @Override
     public Byte[] getRecipeImageById(Long id) {
         return recipeRepository.findById(id).orElse(new Recipe()).getImage();
+    }
+
+    @Override
+    public void deletePictureOfRecipe(Long recipId) {
+        Recipe recipe = recipeRepository.findById(recipId).orElseThrow( () -> new RecipeNotFoundException("Recipe does not exist with id: " + recipId));
+        recipe.setImage(null);
+        recipeRepository.save(recipe);
+    }
+
+    @Override
+    public void uploadPictureForRecipe(FullRecipe fullRecipe) {
+        Recipe recipeWithNewImage = fullRecipeToRecipe.convert(fullRecipe);
+        Recipe recipeToSave = recipeRepository.findById(fullRecipe.getId()).orElseThrow( () -> new RecipeNotFoundException("Recipe does not exist with id: " + fullRecipe.getId()));
+        recipeToSave.setImage(recipeWithNewImage.getImage());
+        recipeRepository.save(recipeToSave);
     }
 
     public List<IngredientDTO> getAllIngredient() {
